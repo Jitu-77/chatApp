@@ -42,7 +42,7 @@ model Message {
   conversationId  Int
   senderId        Int
   createdAt       DateTime @default(now())
-
+  status          String   @default("sent") // 🔥 NEW
   conversation    Conversation @relation(fields: [conversationId], references: [id])
   sender          User         @relation(fields: [senderId], references: [id])
 }

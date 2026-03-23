@@ -1,11 +1,8 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
-
 export const getUserConversations = async (userId) => {
   return prisma.conversation.findMany({
     where: {
       users: {
-        some: { id: userId }, //join
+        some: { id: userId },
       },
     },
     include: {
@@ -14,8 +11,11 @@ export const getUserConversations = async (userId) => {
         orderBy: {
           createdAt: "desc",
         },
-        take: 1, // only last message
+        take: 1,
       },
     },
+    orderBy: {
+      createdAt: "desc", // fallback sorting
+    },
   });
-}
+};

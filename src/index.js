@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 
 import userRouter from "./routes/user.routes.js";
 import conversationRouter from "./routes/conversation.routes.js";
+import { initSocket } from "./socket/socket.js";
 dotenv.config();
 
 const app = express();
@@ -38,10 +39,12 @@ const io = new Server(server, {
     origin: process.env.CORS_ORIGIN,
   },
 });
-
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-});
+// 👇 initialize socket separately
+initSocket(io);
+// moved to socket 
+// io.on("connection", (socket) => {
+//   console.log("User connected:", socket.id);
+// });
 
 // Routes
 app.get("/health", (req, res) => {
