@@ -15,7 +15,11 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    // origin: process.env.CORS_ORIGIN,
+        origin: function (origin, callback) {
+      // allow all origins
+      callback(null, true);
+    },
     credentials: true,
   }),
 );
@@ -36,7 +40,11 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN,
+    // origin: process.env.CORS_ORIGIN,
+    origin: function (origin, callback) {
+      // allow all origins
+      callback(null, true);
+    },
   },
 });
 // 👇 initialize socket separately
