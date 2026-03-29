@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 const userSocketMap = new Map();
 
 export const initSocket = (io) => {
-  console.log("Socket initialized",io);
+  // console.log("Socket initialized",io);
 
   // 🔐 SOCKET AUTH
   io.use((socket, next) => {
