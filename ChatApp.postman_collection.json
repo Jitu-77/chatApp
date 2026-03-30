@@ -1,0 +1,317 @@
+{
+  "info": {
+    "_postman_id": "dea48a85-dda1-48c6-8ecc-c35e5f2ad5e8",
+    "name": "ChatApp",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "14832800"
+  },
+  "item": [
+    {
+      "name": "healthCheck",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SignUp",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"firstName\":\"Jitu\",\r\n    \"lastName\":\"Pal\",\r\n    \"nickName\":\"\",\r\n    \"profilePic\":\"\",\r\n    \"password\":\"Password@123\"\r\n\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/signup",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"firstName\":\"Jitu3435\",\r\n    \"password\": \"Password@123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "refreshToken",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzc0MTE5Njg0LCJleHAiOjE3NzQxMjA1ODR9.R6ip-1Ro5sKbrBKtNqtDD37_Z_wvBXeiY5PAYRcoO_0",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/auth/refreshToken",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "refreshToken"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getDashboard",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzc0ODg2Mjk1LCJleHAiOjE3NzQ4ODcxOTV9.t0kVTRzTRr5mFq6F85mavdL55O965RTn5Msg-sD2lPo",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"firstName\":\"Jitu3435\",\r\n    \"password\": \"Password@123\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/conversation/home",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "conversation",
+            "home"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "createConversation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzc0ODgyOTcwLCJleHAiOjE3NzQ4ODM4NzB9.jx1yVdRWppZSjwQ__euzcyhTlmdyjzfvlaoJdrFkYSA",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"otherUserId\": 5\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/conversation/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "conversation",
+            "create"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "createGroupConv",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzc0ODgzNzM5LCJleHAiOjE3NzQ4ODQ2Mzl9.mNULzqf86Tuwmn7tho3qvwBVIscz5dRVd-lLiCPXp30",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Dev Team\",\r\n  \"userIds\": [6, 7]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/conversation/create-group",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "conversation",
+            "create-group"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "updateConversationGrp",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzc0ODgzNzM5LCJleHAiOjE3NzQ4ODQ2Mzl9.mNULzqf86Tuwmn7tho3qvwBVIscz5dRVd-lLiCPXp30",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Updated Team\",\r\n  \"addUserIds\": [],\r\n  \"removeUserIds\": [4]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/conversation/6",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "conversation",
+            "6"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "leaveGroup",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzc0ODg0OTEzLCJleHAiOjE3NzQ4ODU4MTN9.fHdjMtiz0CXqtbr4E8dp_9YOAIM-Z1duTwlRCmA-Grw",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "file",
+          "file": {}
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/conversation/6/leave",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "conversation",
+            "6",
+            "leave"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:8080/api/conversation/2",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzc0ODg2Mjk1LCJleHAiOjE3NzQ4ODcxOTV9.t0kVTRzTRr5mFq6F85mavdL55O965RTn5Msg-sD2lPo",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/conversation/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "conversation",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

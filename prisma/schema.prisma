@@ -54,6 +54,9 @@ model Conversation {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
+  isGroup   Boolean  @default(false)  
+  name      String?
+  profilePic  String?  @db.VarChar(255)
   users     User[]   @relation("UserConversations")
   messages  Message[]
 }
