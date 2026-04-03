@@ -8,6 +8,8 @@ import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
 import conversationRouter from "./routes/conversation.routes.js";
 import { initSocket } from "./socket/socket.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
 dotenv.config();
 
 const app = express();
@@ -34,6 +36,7 @@ app.use(
 
 app.use(express.static("public"));
 app.use(cookieParser());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Server + Socket
 const server = http.createServer(app);
