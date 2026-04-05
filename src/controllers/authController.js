@@ -23,7 +23,7 @@ export const login = async(req,res)=>{
         try {
         const user = await loginUser(firstName,password)
             if(user){
-                console.log(user)
+                console.log("USER",user)
                   const { accessToken, refreshToken } = 
                   await generateToken(user)
                   console.log(accessToken,refreshToken)

@@ -20,9 +20,9 @@ export const getConversations = async (req, res) => {
       return {
         conversationId: conv.id,
 
-        name: conv.users.length === 1 ? "You" : otherUser.firstName,
+        name: conv?.isGroup ? conv.name : conv.users.length === 1 ? "You" : otherUser.firstName,
 
-        profilePic: otherUser.profilePic,
+        profilePic: conv?.isGroup ? conv.profilePic : otherUser.profilePic,
 
         lastMessage: conv.messages[0]?.content || "",
 

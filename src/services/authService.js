@@ -25,7 +25,7 @@ export const createUser = async (data) => {
 };
 
 export const generateToken = (user) => {
-  console.log("user", user);
+  console.log("generateToken USER ", user);
   const accessToken = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_SECRET, {
     expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
   });
