@@ -2,7 +2,7 @@ import { Router } from "express";
 import { verifyToken } from  "../middlewares/authMiddleware.js"
 import {getConversations,createConversation,
         deleteConversation,createGroupConv,updateGroupConv,
-        leaveGroup} from '../controllers/conversationController.js'
+        leaveGroup,getConversationsById} from '../controllers/conversationController.js'
 const conversationRouter = Router();
 /**
  * @swagger
@@ -291,4 +291,6 @@ conversationRouter.route("/:id").put(verifyToken, updateGroupConv);
  *         description: An error occurred while leaving the group conversation
  */
 conversationRouter.route("/:id/leave").post(verifyToken, leaveGroup);
+
+conversationRouter.route("/:id").get(verifyToken, getConversationsById);
 export default conversationRouter

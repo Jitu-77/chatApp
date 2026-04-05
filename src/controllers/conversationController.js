@@ -2,6 +2,7 @@ import { getUserConversations ,createOrGetConversation,deleteConversationById} f
 import { createGroupConversation } from "../services/conversationService.js";
 import { updateGroupConversation } from "../services/conversationService.js";
 import { leaveGroupService } from "../services/conversationService.js";
+import { getMessagesByConversationId } from "../services/conversationService.js";
 export const getConversations = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -176,3 +177,30 @@ export const leaveGroup = async (req, res) => {
     });
   }
 };
+
+export const getConversationsById = async(req,res)=>{
+  try{
+    const userId = req.user.id;
+    const conversationId = Number(req.params.id);
+    if(isNaN(conversationId)){
+      return res.status(400).json({success:false,message:"Invalid conversation id"})
+    }
+    const messages = await getMessagesByConversationId({
+      conversationId,
+      userId,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: messages.length,
+      data: messages,
+    });
+  }catch(err){
+       console.error("Get messages error:", err);
+
+    res.status(err.status || 500).json({
+      success: false,
+      message: err.message || "Failed to fetch messages",
+    });
+  }
+}

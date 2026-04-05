@@ -210,3 +210,38 @@ export const leaveGroupService = async ({ userId, conversationId }) => {
   }
 
 };
+
+
+export const getMessagesByConversationId = async({ conversationId, userId }) => {
+    const conversation = await prisma.conversation.findFirst({
+    where: {
+      id: conversationId,
+      users: {
+        some: { id: userId },
+      },
+    },
+  });
+    if (!conversation) {
+    const error = new Error("Access denied or conversation not found");
+    error.status = 403;
+    throw error;
+  }
+    return prisma.message.findMany({
+    where: {
+      conversationId,
+    },
+    orderBy: {
+      createdAt: "asc", // ✅ correct for chat UI
+    },
+    include: {
+      sender: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          profilePic: true,
+        },
+      },
+    },
+  });
+}
