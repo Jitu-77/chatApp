@@ -3,7 +3,8 @@ import {
   signup,
   login,
   refreshToken,
-  logout
+  logout,
+  getUsersViaSearch
 } from "../controllers/authController.js"
 import { verifyToken } from "../middlewares/authMiddleware.js"
 const userRouter = Router();
@@ -149,4 +150,5 @@ userRouter.route("/refreshToken").post(verifyToken,refreshToken)
  *         description: An error occurred while logging out
  */
 userRouter.route("/logout").post(logout)
+userRouter.route("/user").get(verifyToken,getUsersViaSearch)
 export default userRouter

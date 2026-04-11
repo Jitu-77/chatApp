@@ -59,3 +59,15 @@ export const loginUser = async (firstName, _password) => {
   let { password, ...rest } = user;
   return rest;
 };
+
+export const searchUsers = async (search) => {
+  const user = await prisma.user.findMany({
+    where: {
+      firstName: {
+        contains: search,
+        mode: 'insensitive', 
+      },
+    },
+  });
+  return user;
+};

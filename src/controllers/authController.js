@@ -1,4 +1,4 @@
-import {createUser,loginUser,generateToken} from '../services/authService.js'
+import {createUser,loginUser,generateToken,searchUsers} from '../services/authService.js'
 import jwt from "jsonwebtoken"
 export const signup = async (req,res)=>{
     try {
@@ -85,4 +85,19 @@ export const logout =   (req,res)=>{
     .status(201).json({
         message: "Logout successful !!",
     })
+}
+export const getUsersViaSearch = async(req,res)=>{
+  try {
+    const search = req.query.search?.replace(/"/g, '').trim() || '';
+    if(!search){
+      return res.status(400).json({success:false,message:"Search word required"});
+    }
+    const users = await searchUsers(search);
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    return res.status(500).json({success:false,message:"Failed to fetch users"});
+  }
 }
