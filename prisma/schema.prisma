@@ -31,6 +31,7 @@ model User {
   lastSeen    DateTime?   
   conversations Conversation[] @relation("UserConversations")
   messages      Message[]
+  seenMessages Message[] @relation("SeenMessages")
 }
 
 // ======================
@@ -46,6 +47,7 @@ model Message {
   status          String   @default("sent") // 🔥 NEW
   conversation    Conversation @relation(fields: [conversationId], references: [id])
   sender          User         @relation(fields: [senderId], references: [id])
+  seenBy        User[]   @relation("SeenMessages")
 }
 
 // ======================

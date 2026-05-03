@@ -16,6 +16,23 @@ export const getUserConversations = async (userId) => {
         },
         take: 1,
       },
+      // 🔥 ADD THIS
+      _count: {
+        select: {
+        messages: {
+          where: {
+          senderId: { not: userId },
+
+          NOT: {
+            seenBy: {
+              some: { id: userId },
+            },
+          },
+          },
+        },
+        },
+      },
+      //    
     },
     orderBy: {
       createdAt: "desc", // fallback sorting

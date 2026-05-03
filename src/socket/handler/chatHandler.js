@@ -60,14 +60,28 @@ export const handleChatEvents = (socket, io) => {
       }
 
       // 💾 Save message
+      // const message = await prisma.message.create({
+      //   data: {
+      //     content,
+      //     conversationId,
+      //     senderId,
+      //     status: "sent",
+      //   },
+      // });
+
+      // new changes
       const message = await prisma.message.create({
         data: {
-          content,
-          conversationId,
-          senderId,
-          status: "sent",
+        content,
+        conversationId,
+        senderId,
+        status: "sent",
+          seenBy: {
+            connect: { id: senderId },
+          },
         },
-      });
+      });      
+      // new changes
 
       const room = `conversation_${conversationId}`;
 
@@ -87,11 +101,16 @@ export const handleChatEvents = (socket, io) => {
     });
 
     conversation.users.forEach((user) => {
-      io.to(`user_${user.id}`).emit("dashboard_update", {
-        conversationId,
-        lastMessage: message.content,
-        lastMessageTime: message.createdAt,
-      });
+      if (user.id !== senderId) {
+        io.to(`user_${user.id}`).emit("dashboard_update", {
+          conversationId,
+          lastMessage: message.content,
+          lastMessageTime: message.createdAt,
+          incrementUnread: 1, // 🔥 ADD
+        });
+      }else{
+        console.log("Same user check")
+      }
     });
  
 
@@ -144,18 +163,47 @@ export const handleChatEvents = (socket, io) => {
     try {
       const userId = socket.user.id;
 
-      await prisma.message.updateMany({
-        where: {
-          conversationId,
-          senderId: {
-            not: userId, // only messages from others
-          },
-        },
-        data: {
-          status: "read",
-        },
+      // await prisma.message.updateMany({
+      //   where: {
+      //     conversationId,
+      //     senderId: {
+      //       not: userId, // only messages from others
+      //     },
+      //   },
+      //   data: {
+      //     status: "read",
+      //   },
+      // });
+
+      
+      
+      // new changes
+      const messages = await prisma.message.findMany({
+  where: {
+    conversationId,
+    senderId: { not: userId },
+    NOT: {
+      seenBy: {
+        some: { id: userId },
+      },
+    },
+  },
+  select: { id: true },
       });
 
+      await Promise.all(
+  messages.map((msg) =>
+    prisma.message.update({
+      where: { id: msg.id },
+      data: {
+        seenBy: {
+          connect: { id: userId },
+        },
+      },
+    })
+  )
+      );
+      // new changes
       const room = `conversation_${conversationId}`;
 
       io.to(room).emit("messages_read", {

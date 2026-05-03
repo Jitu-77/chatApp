@@ -16,7 +16,7 @@ export const getConversations = async (req, res) => {
       console.log(otherUser);
       console.log(conv);
       // self chat
-      if (!otherUser) {
+      if (otherUser?.length === 0) {
         otherUser = [{...conv.users[0]}];
       }
 
@@ -31,6 +31,7 @@ export const getConversations = async (req, res) => {
 
         lastMessageTime: conv.messages[0]?.createdAt || null,
         id:conv.isGroup ? null : otherUser[0].id ,
+        unreadCount: conv._count.messages,
       };
     });
 
