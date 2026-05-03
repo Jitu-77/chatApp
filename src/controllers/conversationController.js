@@ -11,23 +11,26 @@ export const getConversations = async (req, res) => {
     const conversations = await getUserConversations(userId);
 
     const result = conversations.map((conv) => {
-      let otherUser = conv.users.find((u) => u.id !== userId);
+      let otherUser = conv.users.filter((u) => u.id !== userId);
 
+      console.log(otherUser);
+      console.log(conv);
       // self chat
       if (!otherUser) {
-        otherUser = conv.users[0];
+        otherUser = [{...conv.users[0]}];
       }
 
       return {
         conversationId: conv.id,
 
-        name: conv?.isGroup ? conv.name : conv.users.length === 1 ? "You" : otherUser.firstName,
+        name: conv?.isGroup ? conv.name : conv.users.length === 1 ? "You" : otherUser[0]?.firstName,
 
-        profilePic: conv?.isGroup ? conv.profilePic : otherUser.profilePic,
+        profilePic: conv?.isGroup ? conv.profilePic : otherUser[0].profilePic,
 
         lastMessage: conv.messages[0]?.content || "",
 
         lastMessageTime: conv.messages[0]?.createdAt || null,
+        id:conv.isGroup ? null : otherUser[0].id ,
       };
     });
 
