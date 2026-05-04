@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const handleChatEvents = (socket, io) => {
-
   // ======================
   // JOIN CONVERSATION
   // ======================
@@ -72,15 +71,15 @@ export const handleChatEvents = (socket, io) => {
       // new changes
       const message = await prisma.message.create({
         data: {
-        content,
-        conversationId,
-        senderId,
-        status: "sent",
+          content,
+          conversationId,
+          senderId,
+          status: "sent",
           seenBy: {
             connect: { id: senderId },
           },
         },
-      });      
+      });
       // new changes
 
       const room = `conversation_${conversationId}`;
@@ -88,32 +87,46 @@ export const handleChatEvents = (socket, io) => {
       // 📤 Send to others
       socket.to(room).emit("receive_message", message);
 
+      // ✅ Mark as delivered immediately (receiver got it)
+      await prisma.message.update({
+        where: { id: message.id },
+        data: { status: "delivered" },
+      });
+
       // ✅ ACK sender
-      socket.emit("message_sent", message);
-    // =========================
-    // 🔥 DASHBOARD UPDATE LOGIC
-    // =========================
-    // FIRST FIND THE USERS OF THE ONGOING CONVERSATION
-    // THEN EMIT THE DASHBOARD_UPDATE EVENT FOR ALL THE ASSOCIATED USERS 
-    const conversation = await prisma.conversation.findUnique({
-      where: { id: conversationId },
-      include: { users: true },
-    });
+      socket.emit("message_sent", { ...message, tempId: data.tempId });
 
-    conversation.users.forEach((user) => {
-      if (user.id !== senderId) {
-        io.to(`user_${user.id}`).emit("dashboard_update", {
-          conversationId,
-          lastMessage: message.content,
-          lastMessageTime: message.createdAt,
-          incrementUnread: 1, // 🔥 ADD
+      setTimeout(() => {
+        // 🔥 Notify sender about delivery
+        socket.emit("message_delivered_update", {
+          messageId: message.id,
+          status: "delivered",
         });
-      }else{
-        console.log("Same user check")
-      }
-    });
- 
+      }, 500);
+      // =========================
+      // 🔥 DASHBOARD UPDATE LOGIC
+      // =========================
+      // FIRST FIND THE USERS OF THE ONGOING CONVERSATION
+      // THEN EMIT THE DASHBOARD_UPDATE EVENT FOR ALL THE ASSOCIATED USERS
+      const conversation = await prisma.conversation.findUnique({
+        where: { id: conversationId },
+        include: { users: true },
+      });
 
+      conversation.users.forEach((user) => {
+        // facing msg update issue ---
+        if (user.id !== senderId) {
+          io.to(`user_${user.id}`).emit("dashboard_update", {
+            conversationId,
+            lastMessage: message.content,
+            lastMessageTime: message.createdAt,
+            incrementUnread: 1, // 🔥 ADD
+          });
+        } else {
+          console.log("Same user check");
+        }
+        // facing msg update issue ---
+      });
     } catch (err) {
       console.error("Send message error:", err);
 
@@ -175,41 +188,71 @@ export const handleChatEvents = (socket, io) => {
       //   },
       // });
 
-      
-      
       // new changes
       const messages = await prisma.message.findMany({
-  where: {
-    conversationId,
-    senderId: { not: userId },
-    NOT: {
-      seenBy: {
-        some: { id: userId },
-      },
-    },
-  },
-  select: { id: true },
+        where: {
+          conversationId,
+          senderId: { not: userId },
+          NOT: {
+            seenBy: {
+              some: { id: userId },
+            },
+          },
+        },
+        select: { id: true },
       });
 
-      await Promise.all(
-  messages.map((msg) =>
-    prisma.message.update({
-      where: { id: msg.id },
-      data: {
-        seenBy: {
-          connect: { id: userId },
-        },
-      },
-    })
-  )
-      );
+      //     await Promise.all(
+      // messages.map((msg) =>
+      //   prisma.message.update({
+      //     where: { id: msg.id },
+      //     data: {
+      //       seenBy: {
+      //         connect: { id: userId },
+      //       },
+      //       status: "read", // 🔥 IMPORTANT
+      //     },
+      //   })
+      // )
+      //     );
       // new changes
+
+      const updatedMessages = await Promise.all(
+        messages.map((msg) =>
+          prisma.message.update({
+            where: { id: msg.id },
+            data: {
+              seenBy: {
+                connect: { id: userId },
+              },
+              status: "read",
+            },
+          }),
+        ),
+      );
+
       const room = `conversation_${conversationId}`;
 
+      // 🔥 broadcast read event
       io.to(room).emit("messages_read", {
         conversationId,
       });
 
+      // 🔥 update ticks per message
+      updatedMessages.forEach((msg) => {
+        io.to(room).emit("message_read_update", {
+          messageId: msg.id,
+          status: "read",
+        });
+      });
+      // 🔥 ALSO send to sender directly (IMPORTANT)
+      // const message = await prisma.message.findUnique({
+      //   where: { id: msg.id },
+      // });
+      io.to(`user_${msg.senderId}`).emit("message_read_update", {
+        messageId: msg.id,
+        status: "read",
+      });
     } catch (err) {
       console.error("Read error:", err);
     }
